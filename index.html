@@ -336,6 +336,72 @@
     .detail-source a { color: var(--mid); text-decoration: underline; text-underline-offset: 2px; }
     .detail-source a:hover { color: var(--terra); }
 
+    /* ─── QUIZ ─── */
+    .quiz-q { margin-bottom: 28px; }
+    .quiz-qlabel {
+      display: block; font-family: 'Space Mono', monospace;
+      font-weight: 700; font-size: .68rem; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--terra);
+      border-bottom: 2px solid var(--terra); padding-bottom: 5px; margin-bottom: 12px;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-opt {
+      text-align: left; padding: 13px 18px;
+      background: var(--bone); border: 1.5px solid var(--light); border-radius: 4px;
+      cursor: pointer; font-family: 'Space Mono', monospace; font-size: .76rem;
+      color: var(--dark); transition: border-color .15s, background .15s; line-height: 1.5;
+    }
+    .quiz-opt:hover { border-color: var(--terra); }
+    .quiz-opt.selected { border-color: var(--terra); background: rgba(26,58,107,.07); color: var(--terra); font-weight: 700; }
+    .quiz-opt .opt-sub { font-size: .65rem; color: var(--mid); font-weight: 400; display: block; margin-top: 3px; }
+    .quiz-opt.selected .opt-sub { color: var(--terra-light); }
+    .quiz-footer { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .btn-primary:disabled { opacity: .4; cursor: default; }
+    .btn-primary:disabled:hover { background: var(--terra); border-color: var(--terra); }
+
+    /* ─── RECOMMENDED ─── */
+    .rec-heading {
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: clamp(16px, 3vw, 22px); color: var(--dark); margin-bottom: 6px;
+    }
+    .rec-sub { font-size: .76rem; color: var(--mid); margin-bottom: 24px; line-height: 1.75; }
+    .rec-all-link {
+      background: none; border: none; font-family: 'Space Mono', monospace;
+      font-size: .68rem; color: var(--mid); cursor: pointer; padding: 0;
+      text-decoration: underline; text-underline-offset: 2px; margin-top: 16px; display: inline-block;
+    }
+    .rec-all-link:hover { color: var(--terra); }
+
+    /* ─── HOW IT WORKS ─── */
+    .howit-back {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: .66rem; letter-spacing: .09em; color: var(--mid);
+      background: none; border: none; cursor: pointer; padding: 0;
+      margin-bottom: 22px; transition: color .15s;
+    }
+    .howit-back:hover { color: var(--terra); }
+    .howit-heading {
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: clamp(16px, 3vw, 22px); color: var(--dark); margin-bottom: 8px;
+    }
+    .howit-intro { font-size: .76rem; color: var(--mid); line-height: 1.85; margin-bottom: 28px; }
+    .howit-section { margin-bottom: 24px; }
+    .howit-section p { font-size: .76rem; color: var(--mid); line-height: 1.85; margin-bottom: 8px; }
+    .howit-cite {
+      font-size: .65rem; color: var(--mid); line-height: 1.7; display: block;
+      margin-top: 8px; padding-left: 12px; border-left: 2px solid var(--light);
+    }
+    .howit-link { color: var(--terra); text-decoration: underline; text-underline-offset: 2px; }
+    .howit-link:hover { color: var(--terra-light); }
+
+    /* ─── TEXT LINK (bare inline button) ─── */
+    .text-link {
+      background: none; border: none; font-family: 'Space Mono', monospace;
+      font-size: inherit; color: var(--mid); cursor: pointer; padding: 0;
+      text-decoration: underline; text-underline-offset: 2px; letter-spacing: inherit;
+    }
+    .text-link:hover { color: var(--terra); }
+
     /* ─── RESPONSIVE ─── */
     @media (max-width: 480px) {
       .home-actions { flex-direction: column; align-items: flex-start; }
@@ -367,20 +433,106 @@
       One tool. Five minutes. One move.
     </p>
     <div class="home-actions">
-      <button class="btn-primary" onclick="startFull()">UNSTUCK ME &rarr;</button>
-      <button class="btn-secondary" onclick="startCalm()">CALM RESET ONLY</button>
+      <button class="btn-primary" onclick="startQuiz()">FIND MY INTERVENTION &rarr;</button>
+      <button class="btn-ghost" onclick="showScreen('howit')">HOW IT WORKS</button>
     </div>
-    <p class="home-hint">5 minutes &middot; no account &middot; no tracking</p>
+    <p class="home-hint">5 minutes &middot; no account &middot; no tracking &middot; <button class="text-link" onclick="goToLibrary()">browse all 12 &rarr;</button></p>
   </div>
 
-  <!-- ══════════════════════════════════════════ SCREEN: PROMPT -->
-  <div id="screen-prompt" class="screen">
-    <h2 class="prompt-heading">What are you stuck on right now?</h2>
-    <p class="prompt-sub">Optional. Naming it, even just for yourself, often moves something before the work begins.</p>
-    <textarea class="input" id="stuckInput" placeholder="I keep avoiding... / I cannot decide... / I feel..." rows="4"></textarea>
-    <div class="prompt-actions">
-      <button class="btn-primary" onclick="goToLibrary()">CONTINUE &rarr;</button>
-      <button class="btn-ghost" onclick="goToLibrary()">SKIP</button>
+  <!-- ══════════════════════════════════════════ SCREEN: QUIZ -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-q">
+      <span class="quiz-qlabel">What does stuck feel like right now?</span>
+      <div class="quiz-options" id="quizQ1">
+        <button class="quiz-opt" data-val="calm" onclick="quizSelect(1,this)">
+          Anxious or spinning
+          <span class="opt-sub">Hard to settle. Thoughts keep circling.</span>
+        </button>
+        <button class="quiz-opt" data-val="action" onclick="quizSelect(1,this)">
+          Paralysed, can't start
+          <span class="opt-sub">I know what to do. I'm just not moving.</span>
+        </button>
+        <button class="quiz-opt" data-val="regulation" onclick="quizSelect(1,this)">
+          Emotionally flooded
+          <span class="opt-sub">Overwhelmed by feeling. Hard to think straight.</span>
+        </button>
+        <button class="quiz-opt" data-val="focus" onclick="quizSelect(1,this)">
+          Foggy or directionless
+          <span class="opt-sub">Lost sight of what matters or why.</span>
+        </button>
+      </div>
+    </div>
+    <div class="quiz-q">
+      <span class="quiz-qlabel">How long do you have?</span>
+      <div class="quiz-options" id="quizQ2">
+        <button class="quiz-opt" data-val="short" onclick="quizSelect(2,this)">About 2 minutes</button>
+        <button class="quiz-opt" data-val="any" onclick="quizSelect(2,this)">5 to 10 minutes</button>
+      </div>
+    </div>
+    <div class="quiz-footer">
+      <button class="btn-primary" id="quizSubmit" onclick="showRecommended()" disabled>SHOW MY INTERVENTION &rarr;</button>
+      <button class="btn-ghost" onclick="goToLibrary()">SEE ALL 12</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SCREEN: RECOMMENDED -->
+  <div id="screen-recommended" class="screen">
+    <h2 class="rec-heading">For you right now.</h2>
+    <p class="rec-sub" id="recSub"></p>
+    <div id="recList"></div>
+    <button class="rec-all-link" onclick="goToLibrary()">Browse all 12 interventions &rarr;</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SCREEN: HOW IT WORKS -->
+  <div id="screen-howit" class="screen">
+    <button class="howit-back" onclick="showScreen('home')">&larr; BACK</button>
+    <h2 class="howit-heading">How it works.</h2>
+    <p class="howit-intro">UNstuck is built on four bodies of research, one per category. Each technique is short and evidence-based, and designed to move something without requiring you to feel ready first.</p>
+
+    <div class="howit-section">
+      <div class="section-title">Calm</div>
+      <p>Anxiety and overwhelm are physiological states before they are cognitive ones. Breathing, grounding, and shaking work by interrupting the body's threat response — not by reframing the thoughts.</p>
+      <span class="howit-cite">
+        <a href="https://en.wikipedia.org/wiki/Diaphragmatic_breathing" target="_blank" class="howit-link">Slow breathing</a> &middot; Zaccaro et al. (2018). <em>Frontiers in Human Neuroscience.</em>
+        &nbsp;&middot;&nbsp;
+        <a href="https://en.wikipedia.org/wiki/Dialectical_behavior_therapy" target="_blank" class="howit-link">DBT grounding</a> &middot; Linehan (1993).
+        &nbsp;&middot;&nbsp;
+        <a href="https://en.wikipedia.org/wiki/Somatic_experiencing" target="_blank" class="howit-link">Somatic Experiencing</a> &middot; Levine (1997).
+      </span>
+    </div>
+
+    <div class="howit-section">
+      <div class="section-title">Action</div>
+      <p>Motivation follows action, not the other way around. Specifying the smallest possible concrete step — rather than just intending to act — dramatically increases follow-through, even for tasks you are dreading.</p>
+      <span class="howit-cite">
+        <a href="https://en.wikipedia.org/wiki/Implementation_intention" target="_blank" class="howit-link">Implementation intentions</a> &middot; Gollwitzer (1999). <em>American Psychologist, 54</em>(7).
+        &nbsp;&middot;&nbsp;
+        <a href="https://en.wikipedia.org/wiki/Temporal_motivation_theory" target="_blank" class="howit-link">Temporal Motivation Theory</a> &middot; Steel (2007). <em>Psychological Bulletin, 133</em>(1).
+      </span>
+    </div>
+
+    <div class="howit-section">
+      <div class="section-title">Regulation</div>
+      <p>Naming an emotion reduces its charge without suppressing it. Touch activates the caregiving system. Social connection — even just anticipated — regulates the neural threat response.</p>
+      <span class="howit-cite">
+        <a href="https://en.wikipedia.org/wiki/Affect_labeling" target="_blank" class="howit-link">Affect labeling</a> &middot; Lieberman et al. (2007). <em>Psychological Science, 18</em>(5).
+        &nbsp;&middot;&nbsp;
+        <a href="https://en.wikipedia.org/wiki/Self-compassion" target="_blank" class="howit-link">Self-compassion</a> &middot; Neff (2003). <em>Self and Identity, 2</em>(2).
+        &nbsp;&middot;&nbsp;
+        <a href="https://en.wikipedia.org/wiki/Social_support" target="_blank" class="howit-link">Social regulation</a> &middot; Coan et al. (2006). <em>Psychological Science, 17</em>(12).
+      </span>
+    </div>
+
+    <div class="howit-section">
+      <div class="section-title">Focus</div>
+      <p>Vividly imagining a future self changes how present decisions feel. Describing a solved state accesses knowledge you already have. Recalling recent competent actions counters the negativity bias that dominates when stuck.</p>
+      <span class="howit-cite">
+        <a href="https://en.wikipedia.org/wiki/Temporal_self-appraisal" target="_blank" class="howit-link">Future self-continuity</a> &middot; Hershfield (2011). <em>Annals of the New York Academy of Sciences, 1235.</em>
+        &nbsp;&middot;&nbsp;
+        <a href="https://en.wikipedia.org/wiki/Solution-focused_brief_therapy" target="_blank" class="howit-link">Solution-focused brief therapy</a> &middot; de Shazer (1988).
+        &nbsp;&middot;&nbsp;
+        <a href="https://en.wikipedia.org/wiki/Positive_psychology" target="_blank" class="howit-link">Positive psychology</a> &middot; Seligman et al. (2005). <em>American Psychologist, 60</em>(5).
+      </span>
     </div>
   </div>
 
@@ -628,15 +780,32 @@ const CATEGORY_LABELS = { calm: 'Calm', action: 'Action', regulation: 'Regulatio
 const CATEGORY_ORDER  = ['calm', 'action', 'regulation', 'focus'];
 const CIRCUMFERENCE   = 2 * Math.PI * 60; // 376.99
 
+const RECOMMEND = {
+  calm:       { short: ['shake', 'breathing'],       any: ['breathing', 'grounding', 'shake'] },
+  action:     { short: ['tiny-step', 'declutter'],   any: ['tiny-step', 'sprint', 'declutter'] },
+  regulation: { short: ['name-it', 'reach-out'],     any: ['name-it', 'heart', 'reach-out'] },
+  focus:      { short: ['future-self', 'miracle'],   any: ['future-self', 'miracle', 'strengths'] },
+};
+
+const REC_SUBS = {
+  calm:       'These work on the body first. You do not need to think your way out of this.',
+  action:     'These break the avoidance loop with the smallest real move.',
+  regulation: 'These work with what you are feeling, not around it.',
+  focus:      'These help you access a clearer vantage point.',
+};
+
 // ─── STATE ────────────────────────────────────────────────────────────
 const S = {
-  filter:        null,
-  selectedId:    null,
-  timerTotal:    0,
+  filter:         null,
+  selectedId:     null,
+  prevScreen:     'recommended',
+  timerTotal:     0,
   timerRemaining: 0,
-  timerRunning:  false,
-  timerInterval: null
+  timerRunning:   false,
+  timerInterval:  null
 };
+
+const Q = { q1: null, q2: null };
 
 // ─── SCREEN TRANSITIONS ───────────────────────────────────────────────
 function showScreen(id) {
@@ -649,21 +818,51 @@ function showScreen(id) {
 }
 
 // ─── NAVIGATION ───────────────────────────────────────────────────────
-function startFull() {
-  S.filter = null;
-  showScreen('prompt');
+function startQuiz() {
+  Q.q1 = null; Q.q2 = null;
+  document.querySelectorAll('.quiz-opt').forEach(b => b.classList.remove('selected'));
+  document.getElementById('quizSubmit').disabled = true;
+  showScreen('quiz');
 }
 
-function startCalm() {
-  S.filter = 'calm';
-  document.getElementById('librarySub').textContent =
-    'Calm interventions. Short resets for exactly the moment you are in.';
-  renderLibrary();
-  showScreen('library');
+function quizSelect(qnum, btn) {
+  const groupId = qnum === 1 ? 'quizQ1' : 'quizQ2';
+  document.getElementById(groupId).querySelectorAll('.quiz-opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  if (qnum === 1) Q.q1 = btn.dataset.val;
+  else Q.q2 = btn.dataset.val;
+  document.getElementById('quizSubmit').disabled = !(Q.q1 && Q.q2);
+}
+
+function showRecommended() {
+  if (!Q.q1 || !Q.q2) return;
+  const ids   = RECOMMEND[Q.q1][Q.q2];
+  const items = ids.map(id => INTERVENTIONS.find(i => i.id === id));
+  document.getElementById('recSub').textContent = REC_SUBS[Q.q1];
+  const list = document.getElementById('recList');
+  list.innerHTML = '';
+  items.forEach(intv => {
+    const card = document.createElement('div');
+    card.className = 'int-card';
+    card.style.marginBottom = '8px';
+    card.onclick = () => { S.prevScreen = 'recommended'; openIntervention(intv.id); };
+    card.innerHTML = `
+      <div class="int-info">
+        <p class="int-name">${intv.name}</p>
+        <p class="int-desc">${intv.description}</p>
+      </div>
+      <div class="int-meta">
+        ${intv.duration ? `<span class="int-dur">${fmtDur(intv.duration)}</span>` : ''}
+        <span class="int-arrow">&#8250;</span>
+      </div>`;
+    list.appendChild(card);
+  });
+  showScreen('recommended');
 }
 
 function goToLibrary() {
   S.filter = null;
+  S.prevScreen = 'library';
   document.getElementById('librarySub').textContent =
     'Choose whatever feels most relevant. If unsure, start with Calm.';
   renderLibrary();
@@ -672,7 +871,7 @@ function goToLibrary() {
 
 function goBackToLibrary() {
   stopTimer();
-  showScreen('library');
+  showScreen(S.prevScreen || 'library');
 }
 
 function finishIntervention(status) {
@@ -700,8 +899,12 @@ function returnHome() {
 
 function tryAnother() {
   stopTimer();
-  renderLibrary();
-  showScreen('library');
+  if (S.prevScreen === 'recommended') {
+    showScreen('recommended');
+  } else {
+    renderLibrary();
+    showScreen('library');
+  }
 }
 
 // ─── LIBRARY RENDER ───────────────────────────────────────────────────
@@ -729,7 +932,7 @@ function renderLibrary() {
     items.forEach(intv => {
       const card = document.createElement('div');
       card.className = 'int-card';
-      card.onclick = () => openIntervention(intv.id);
+      card.onclick = () => { S.prevScreen = 'library'; openIntervention(intv.id); };
       card.innerHTML = `
         <div class="int-info">
           <p class="int-name">${intv.name}</p>

@@ -95,6 +95,13 @@ Open `index.html` in any browser. No build step, no dependencies beyond Google F
 
 ---
 
+## Credits
+
+Concept, content, intervention design, and testing by Natalie Frantsits.
+Built with [Claude Code](https://claude.ai/code) by Anthropic.
+
+---
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
