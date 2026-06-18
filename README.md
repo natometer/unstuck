@@ -8,7 +8,7 @@ Built by [Natalie Frantsits](https://nataliefrantsits.at), clarity coach, Vienna
 
 ## What it does
 
-UNstuck guides you through one short, structured intervention when you are circling, frozen, or overwhelmed. Five minutes. No account. No tracking.
+UNstuck guides you through one short, structured intervention when you are circling, frozen, or overwhelmed.
 
 **12 interventions across 4 categories:**
 
