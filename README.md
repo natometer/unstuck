@@ -2,7 +2,7 @@
 
 **Small, structured interventions for moments when thinking alone is not enough.**
 
-Built by [Natalie Frantsits](https://nataliefrantsits.at) — clarity coach, Vienna.
+Built by [Natalie Frantsits](https://nataliefrantsits.at), clarity coach, Vienna.
 
 ---
 
