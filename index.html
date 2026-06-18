@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNstuck</title>
+  <meta name="description" content="Small, structured interventions for moments when you are circling, frozen, or overwhelmed. Free tool by Natalie Frantsits.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sand:        #f4f6fb;
+      --terra:       #1a3a6b;
+      --terra-light: #2b5db5;
+      --bone:        #ffffff;
+      --dark:        #0f2150;
+      --mid:         #4a5a7a;
+      --light:       #c4cedf;
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      background: var(--sand);
+      color: var(--dark);
+      font-family: 'Space Mono', monospace;
+      font-weight: 400;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ─── APP WRAPPER ─── */
+    #app {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 16px 0;
+      width: 100%;
+    }
+
+    .inner { width: 100%; max-width: 700px; }
+
+    /* ─── TOP BAR ─── */
+    .topbar {
+      width: 100%; max-width: 700px;
+      padding: 14px 0 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--light);
+      margin-bottom: 40px;
+      font-size: .68rem; letter-spacing: .1em; color: var(--mid);
+    }
+    .topbar a {
+      color: var(--terra); text-decoration: none; transition: color .15s;
+    }
+    .topbar a:hover { color: var(--terra-light); }
+    .topbar-brand {
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: .85rem; color: var(--terra); letter-spacing: .06em;
+    }
+
+    /* ─── SCREENS ─── */
+    .screen {
+      display: none;
+      width: 100%; max-width: 700px;
+      padding-bottom: 48px;
+      animation: fadeIn .25s ease;
+    }
+    .screen.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ─── CARD ─── */
+    .card {
+      background: var(--bone);
+      border-radius: 4px;
+      padding: 20px 22px;
+      border: 1px solid var(--light);
+      box-shadow: 0 1px 6px rgba(10,32,80,.06);
+    }
+
+    /* ─── SECTION TITLE ─── */
+    .section-title {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: .68rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--terra);
+      border-bottom: 2px solid var(--terra);
+      padding-bottom: 5px;
+      margin-bottom: 8px;
+    }
+
+    /* ─── BUTTONS ─── */
+    .btn-primary {
+      display: inline-block;
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: .72rem; letter-spacing: .1em;
+      background: var(--terra); color: #fff;
+      border: 2px solid var(--terra); border-radius: 4px;
+      padding: 12px 24px; cursor: pointer; text-decoration: none;
+      transition: background .15s, border-color .15s; line-height: 1;
+    }
+    .btn-primary:hover { background: var(--terra-light); border-color: var(--terra-light); }
+    .btn-primary:active { transform: scale(.98); }
+
+    .btn-secondary {
+      display: inline-block;
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: .72rem; letter-spacing: .1em;
+      background: transparent; color: var(--terra);
+      border: 2px solid var(--terra); border-radius: 4px;
+      padding: 12px 24px; cursor: pointer; text-decoration: none;
+      transition: background .15s, color .15s; line-height: 1;
+    }
+    .btn-secondary:hover { background: var(--terra); color: #fff; }
+
+    .btn-ghost {
+      display: inline-block;
+      font-family: 'Space Mono', monospace; font-weight: 400;
+      font-size: .7rem; letter-spacing: .08em;
+      background: transparent; color: var(--mid);
+      border: 1px solid var(--light); border-radius: 4px;
+      padding: 10px 20px; cursor: pointer; text-decoration: none;
+      transition: border-color .15s, color .15s; line-height: 1;
+    }
+    .btn-ghost:hover { border-color: var(--terra); color: var(--terra); }
+
+    /* ─── HOME ─── */
+    .home-heading {
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: clamp(36px, 9vw, 72px);
+      color: var(--terra); line-height: 1.05; margin-bottom: 10px;
+      letter-spacing: -.01em;
+    }
+    .home-tagline {
+      font-family: 'Space Mono', monospace; font-weight: 400;
+      font-size: clamp(12px, 2.5vw, 16px);
+      color: var(--mid); margin-bottom: 24px; line-height: 1.55;
+    }
+    .home-body {
+      font-size: .78rem; line-height: 1.85; color: var(--mid);
+      max-width: 480px; margin-bottom: 32px;
+    }
+    .home-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 32px; }
+    .home-hint {
+      padding-top: 18px; border-top: 1px solid var(--light);
+      font-size: .65rem; letter-spacing: .08em; color: var(--mid);
+    }
+
+    /* ─── PROMPT ─── */
+    .prompt-heading {
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: clamp(16px, 3.5vw, 24px);
+      color: var(--dark); line-height: 1.35; margin-bottom: 10px;
+    }
+    .prompt-sub { font-size: .76rem; color: var(--mid); margin-bottom: 18px; line-height: 1.75; }
+    .input {
+      width: 100%;
+      background: var(--bone); border: 1px solid var(--light);
+      border-radius: 4px; padding: 14px 16px; resize: vertical;
+      font-family: 'Space Mono', monospace; font-size: .78rem;
+      color: var(--dark); line-height: 1.65;
+      margin-bottom: 18px; outline: none;
+      transition: border-color .15s;
+    }
+    .input:focus { border-color: var(--terra); }
+    .input::placeholder { color: var(--mid); opacity: .7; }
+    .prompt-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+    /* ─── LIBRARY ─── */
+    .library-heading {
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: clamp(16px, 3vw, 22px);
+      color: var(--dark); margin-bottom: 6px;
+    }
+    .library-sub { font-size: .76rem; color: var(--mid); margin-bottom: 28px; line-height: 1.75; }
+    .category-group { margin-bottom: 24px; }
+
+    .int-card {
+      background: var(--bone); border-radius: 4px; padding: 13px 18px;
+      border: 1px solid var(--light);
+      box-shadow: 0 1px 4px rgba(10,32,80,.04);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 14px; cursor: pointer; margin-bottom: 3px;
+      transition: border-color .15s, background .15s;
+    }
+    .int-card:hover { border-color: var(--terra); background: rgba(26,58,107,.03); }
+    .int-info { flex: 1; min-width: 0; }
+    .int-name {
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: .76rem; color: var(--dark); letter-spacing: .03em; margin-bottom: 2px;
+    }
+    .int-desc { font-size: .68rem; color: var(--mid); line-height: 1.5; }
+    .int-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .int-dur {
+      font-size: .62rem; letter-spacing: .08em; color: var(--mid);
+      background: var(--sand); border: 1px solid var(--light);
+      border-radius: 3px; padding: 2px 7px;
+    }
+    .int-arrow { color: var(--terra); font-size: 1rem; font-weight: 700; }
+
+    /* ─── DETAIL ─── */
+    .detail-back {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: .66rem; letter-spacing: .09em; color: var(--mid);
+      background: none; border: none; cursor: pointer; padding: 0;
+      margin-bottom: 22px; transition: color .15s;
+    }
+    .detail-back:hover { color: var(--terra); }
+    .detail-category {
+      font-size: .62rem; font-weight: 700; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--terra); margin-bottom: 6px;
+    }
+    .detail-heading {
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: clamp(16px, 3.5vw, 24px);
+      color: var(--dark); line-height: 1.35; margin-bottom: 8px;
+    }
+    .detail-desc { font-size: .76rem; color: var(--mid); margin-bottom: 20px; line-height: 1.75; }
+
+    .steps-card {
+      background: var(--bone); border-radius: 4px;
+      border: 1px solid var(--light);
+      box-shadow: 0 1px 6px rgba(10,32,80,.06);
+      margin-bottom: 18px; overflow: hidden;
+    }
+    .step-row {
+      display: flex; align-items: baseline; gap: 16px;
+      padding: 13px 20px; border-bottom: 1px solid var(--light);
+    }
+    .step-row:last-child { border-bottom: none; }
+    .step-n {
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: .62rem; letter-spacing: .12em; color: var(--terra);
+      flex-shrink: 0; min-width: 22px;
+    }
+    .step-text { font-size: .78rem; line-height: 1.8; color: var(--dark); }
+
+    /* ─── TIMER ─── */
+    .timer-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      margin-bottom: 18px; padding: 22px 20px;
+      background: var(--bone); border-radius: 4px;
+      border: 1px solid var(--light);
+      box-shadow: 0 1px 6px rgba(10,32,80,.06);
+    }
+    .timer-ring-wrap {
+      position: relative; width: 136px; height: 136px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+    }
+    .timer-svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+    .timer-track { fill: none; stroke: var(--light); stroke-width: 2.5; }
+    .timer-fill  {
+      fill: none; stroke: var(--terra); stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-dasharray: 376.99;
+      stroke-dashoffset: 0;
+    }
+    .timer-digits {
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: 1.9rem; color: var(--dark); z-index: 1; letter-spacing: .02em;
+    }
+    .timer-btn {
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: .7rem; letter-spacing: .1em;
+      background: var(--terra); color: #fff;
+      border: 2px solid var(--terra); border-radius: 4px;
+      padding: 10px 22px; cursor: pointer; transition: background .15s, border-color .15s;
+    }
+    .timer-btn:hover { background: var(--terra-light); border-color: var(--terra-light); }
+
+    .detail-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+    /* ─── OUTCOME ─── */
+    .outcome-heading {
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: clamp(16px, 3vw, 22px);
+      color: var(--dark); margin-bottom: 8px;
+    }
+    .outcome-sub { font-size: .76rem; color: var(--mid); margin-bottom: 22px; line-height: 1.75; }
+
+    .seg-control {
+      display: inline-flex; border-radius: 4px;
+      border: 2px solid var(--terra); overflow: hidden;
+      margin-bottom: 26px; width: 100%; max-width: 420px;
+    }
+    .seg-btn {
+      flex: 1; padding: 12px 8px;
+      font-family: 'Space Mono', monospace; font-weight: 700;
+      font-size: .65rem; letter-spacing: .09em;
+      background: transparent; color: var(--terra);
+      border: none; border-right: 1px solid var(--terra);
+      cursor: pointer; text-align: center;
+      transition: background .15s, color .15s; line-height: 1;
+    }
+    .seg-btn:last-child { border-right: none; }
+    .seg-btn:hover { background: rgba(26,58,107,.08); }
+    .seg-btn.selected { background: var(--terra); color: #fff; }
+
+    .outcome-note-label {
+      display: block; font-size: .65rem; font-weight: 700; letter-spacing: .12em;
+      color: var(--mid); margin-bottom: 8px;
+    }
+    .outcome-actions { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+    .outcome-rule { border: none; border-top: 1px solid var(--light); margin: 28px 0 20px; }
+    .outcome-coaching {
+      font-family: 'Space Mono', monospace; font-weight: 400;
+      font-size: .74rem; line-height: 1.9; color: var(--mid);
+    }
+    .outcome-coaching a { color: var(--terra); text-decoration: underline; text-underline-offset: 2px; }
+    .outcome-coaching a:hover { color: var(--terra-light); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center; padding: 32px 16px 24px;
+      font-family: 'Space Mono', monospace; font-size: .68rem;
+      color: #8a9ab8; letter-spacing: .06em;
+    }
+    footer a { color: var(--terra); text-decoration: underline; text-underline-offset: 2px; }
+
+    /* ─── SOURCE LINE ─── */
+    .detail-source {
+      font-size: .64rem; color: var(--mid); line-height: 1.7;
+      margin-top: 14px; padding-top: 12px;
+      border-top: 1px solid var(--light);
+    }
+    .detail-source a { color: var(--mid); text-decoration: underline; text-underline-offset: 2px; }
+    .detail-source a:hover { color: var(--terra); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 480px) {
+      .home-actions { flex-direction: column; align-items: flex-start; }
+      .seg-control { max-width: 100%; }
+      .detail-actions { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .screen { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <a href="https://nataliefrantsits.at">← nataliefrantsits.at</a>
+    <span class="topbar-brand">UNstuck</span>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SCREEN: HOME -->
+  <div id="screen-home" class="screen active">
+    <h1 class="home-heading">UNstuck.</h1>
+    <p class="home-tagline">When thinking alone is not enough.</p>
+    <p class="home-body">
+      Small, structured interventions for moments when you are circling, frozen, or overwhelmed.
+      One tool. Five minutes. One move.
+    </p>
+    <div class="home-actions">
+      <button class="btn-primary" onclick="startFull()">UNSTUCK ME &rarr;</button>
+      <button class="btn-secondary" onclick="startCalm()">CALM RESET ONLY</button>
+    </div>
+    <p class="home-hint">5 minutes &middot; no account &middot; no tracking</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SCREEN: PROMPT -->
+  <div id="screen-prompt" class="screen">
+    <h2 class="prompt-heading">What are you stuck on right now?</h2>
+    <p class="prompt-sub">Optional. Naming it, even just for yourself, often moves something before the work begins.</p>
+    <textarea class="input" id="stuckInput" placeholder="I keep avoiding... / I cannot decide... / I feel..." rows="4"></textarea>
+    <div class="prompt-actions">
+      <button class="btn-primary" onclick="goToLibrary()">CONTINUE &rarr;</button>
+      <button class="btn-ghost" onclick="goToLibrary()">SKIP</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SCREEN: LIBRARY -->
+  <div id="screen-library" class="screen">
+    <h2 class="library-heading">Pick one.</h2>
+    <p class="library-sub" id="librarySub">Choose whatever feels most relevant. If unsure, start with Calm.</p>
+    <div id="interventionList"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SCREEN: DETAIL -->
+  <div id="screen-detail" class="screen">
+    <button class="detail-back" onclick="goBackToLibrary()">&larr; ALL INTERVENTIONS</button>
+    <p class="detail-category" id="detailCategory"></p>
+    <h2 class="detail-heading" id="detailHeading"></h2>
+    <p class="detail-desc" id="detailDesc"></p>
+    <div class="steps-card" id="stepsList"></div>
+    <p class="detail-source" id="detailSource"></p>
+
+    <div class="timer-wrap" id="timerWrap" style="display:none;">
+      <div class="timer-ring-wrap">
+        <svg class="timer-svg" viewBox="0 0 136 136" width="136" height="136">
+          <circle class="timer-track" cx="68" cy="68" r="60"/>
+          <circle class="timer-fill"  cx="68" cy="68" r="60" id="timerFill"/>
+        </svg>
+        <span class="timer-digits" id="timerDigits">0:00</span>
+      </div>
+      <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">START TIMER</button>
+    </div>
+
+    <div class="detail-actions">
+      <button class="btn-primary" onclick="finishIntervention('done')">I'M DONE &rarr;</button>
+      <button class="btn-secondary" onclick="finishIntervention('couldnt')">COULDN'T FINISH</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ SCREEN: OUTCOME -->
+  <div id="screen-outcome" class="screen">
+    <h2 class="outcome-heading">Did this help?</h2>
+    <p class="outcome-sub" id="outcomeSub">Even a small move counts.</p>
+    <div class="seg-control">
+      <button class="seg-btn" onclick="selectOutcome(this,'yes')">YES</button>
+      <button class="seg-btn" onclick="selectOutcome(this,'somewhat')">SOMEWHAT</button>
+      <button class="seg-btn" onclick="selectOutcome(this,'no')">NOT REALLY</button>
+    </div>
+    <label class="outcome-note-label">ANYTHING TO NOTE? (OPTIONAL)</label>
+    <textarea class="input" id="outcomeNote" placeholder="What moved, or did not..." rows="3" style="margin-bottom:22px;"></textarea>
+    <div class="outcome-actions">
+      <button class="btn-primary" onclick="returnHome()">RETURN HOME</button>
+      <button class="btn-ghost" onclick="tryAnother()">TRY ANOTHER &rarr;</button>
+    </div>
+    <hr class="outcome-rule">
+    <p class="outcome-coaching">
+      If this helped and you want to go further, or if what you are carrying runs deeper than a 5-minute tool can reach,
+      <a href="https://nataliefrantsits.at" target="_blank">a session with Natalie Frantsits</a> is designed for exactly that.
+    </p>
+  </div>
+
+</div><!-- /#app -->
+
+<footer>
+  Made by <a href="https://nataliefrantsits.at" target="_blank">Natalie Frantsits</a>
+  &nbsp;&middot;&nbsp; &copy; 2026
+</footer>
+
+<script>
+// ─── INTERVENTIONS ────────────────────────────────────────────────────
+const INTERVENTIONS = [
+  // CALM
+  {
+    id: 'breathing',
+    name: '3-Min Breathing Reset',
+    category: 'calm',
+    description: 'Interrupt the spiral with your breath.',
+    steps: [
+      'Sit or stand comfortably. Feet on the floor if you can.',
+      'Breathe in for 4 counts, hold for 4, out for 4, hold for 4.',
+      'Do not try to think your way through anything. Just breathe.',
+      'The timer runs for 3 minutes. Let it do the work.'
+    ],
+    duration: 180,
+    source: '<a href="https://en.wikipedia.org/wiki/Diaphragmatic_breathing" target="_blank">Slow breathing &amp; autonomic regulation</a> &middot; Zaccaro et al. (2018). How breath-control can change your life. <em>Frontiers in Human Neuroscience, 12</em>. https://doi.org/10.3389/fnhum.2018.00353'
+  },
+  {
+    id: 'grounding',
+    name: '5-4-3-2-1 Grounding',
+    category: 'calm',
+    description: 'Land back in the present moment.',
+    steps: [
+      'Name 5 things you can see right now. Say them out loud or write them.',
+      'Name 4 things you can physically feel: floor, fabric, temperature.',
+      'Name 3 things you can hear.',
+      'Name 2 things you can smell, or imagine two smells you like.',
+      'Name 1 thing you can taste. This is not about calm. It is about landing.'
+    ],
+    duration: 150,
+    source: '<a href="https://en.wikipedia.org/wiki/Dialectical_behavior_therapy" target="_blank">DBT sensory grounding</a> &middot; Linehan, M. M. (1993). <em>Cognitive-Behavioral Treatment of Borderline Personality Disorder.</em> Guilford Press.'
+  },
+  {
+    id: 'shake',
+    name: 'Shake Reset',
+    category: 'calm',
+    description: 'Release what the body has been holding.',
+    steps: [
+      'Stand up if you can.',
+      'Shake your hands, then arms, shoulders, legs. Loosely.',
+      'Feel ridiculous. That is part of it.',
+      'The body holds tension the mind has already forgotten.'
+    ],
+    duration: 60,
+    source: '<a href="https://en.wikipedia.org/wiki/Somatic_experiencing" target="_blank">Somatic Experiencing &amp; TRE</a> &middot; Levine, P. A. (1997). <em>Waking the Tiger.</em> North Atlantic Books. &middot; Berceli, D. (2008). <em>The Revolutionary Trauma Release Process.</em> Namaste.'
+  },
+  // ACTION
+  {
+    id: 'tiny-step',
+    name: 'Tiny Next Step',
+    category: 'action',
+    description: 'Break the avoidance loop with the smallest real move.',
+    steps: [
+      'Write down the one thing you are currently avoiding.',
+      'Ask: what is the smallest possible action that moves it forward by 1%?',
+      'Not the right action. Not the complete one. The smallest real one.',
+      'Do it now, or write down a specific time in the next 24 hours to do it.'
+    ],
+    duration: 0,
+    source: '<a href="https://en.wikipedia.org/wiki/Implementation_intention" target="_blank">Implementation intentions</a> &middot; Gollwitzer, P. M. (1999). <em>American Psychologist, 54</em>(7), 493&ndash;503. https://doi.org/10.1037/0003-066X.54.7.493'
+  },
+  {
+    id: 'sprint',
+    name: '5-Min Sprint',
+    category: 'action',
+    description: 'Short, focused output breaks the inertia.',
+    steps: [
+      'Pick one thing. Not the most important. The one that is ready.',
+      'Work on it until the timer ends.',
+      'No switching. No checking anything else. Just this.',
+      'When the timer ends, you can stop. Or you might not want to.'
+    ],
+    duration: 300,
+    source: '<a href="https://en.wikipedia.org/wiki/Temporal_motivation_theory" target="_blank">Temporal Motivation Theory</a> &middot; Steel, P. (2007). The nature of procrastination. <em>Psychological Bulletin, 133</em>(1), 65&ndash;94. https://doi.org/10.1037/0033-2909.133.1.65'
+  },
+  {
+    id: 'declutter',
+    name: '2-Min Declutter',
+    category: 'action',
+    description: 'External order can interrupt internal noise.',
+    steps: [
+      'Pick one surface: desk, table, floor, counter.',
+      'Clear it completely before the timer ends.',
+      'Put things away, not to the side.',
+      'This is not tidying. It is a short physical act with a clear end point.'
+    ],
+    duration: 120,
+    source: '<a href="https://en.wikipedia.org/wiki/Behavioral_activation" target="_blank">Behavioural activation</a> &amp; environment &middot; Martell et al. (2010). <em>Behavioral Activation for Depression.</em> Guilford. &middot; McMains &amp; Kastner (2011). <em>Journal of Neuroscience, 31</em>(1), 99&ndash;105.'
+  },
+  // REGULATION
+  {
+    id: 'name-it',
+    name: 'Name-It-to-Tame-It',
+    category: 'regulation',
+    description: 'Naming an emotion reduces its charge.',
+    steps: [
+      'Ask: what am I actually feeling right now?',
+      'Not "stressed" or "bad." Be specific: anxious? ashamed? resentful? afraid?',
+      'Name it out loud or write it in one word.',
+      'Naming an emotion does not make it bigger. It makes it less in charge.'
+    ],
+    duration: 0,
+    source: '<a href="https://en.wikipedia.org/wiki/Affect_labeling" target="_blank">Affect labeling</a> &middot; Lieberman, M. D., et al. (2007). Putting feelings into words. <em>Psychological Science, 18</em>(5), 421&ndash;428. https://doi.org/10.1111/j.1467-9280.2007.01916.x'
+  },
+  {
+    id: 'heart',
+    name: 'Hand-on-Heart',
+    category: 'regulation',
+    description: 'A physiological reset using touch and self-recognition.',
+    steps: [
+      'Place one hand on your chest. Feel the warmth.',
+      'Breathe slowly, noticing the rise and fall under your hand.',
+      'Say quietly, or just think: "This is hard. I am doing what I can."',
+      'You do not need to believe it yet. Say it anyway.'
+    ],
+    duration: 120,
+    source: '<a href="https://en.wikipedia.org/wiki/Self-compassion" target="_blank">Self-compassion &amp; self-touch</a> &middot; Neff, K. D. (2003). <em>Self and Identity, 2</em>(2), 85&ndash;101. https://doi.org/10.1080/15298860309032 &middot; Ditzen et al. (2007). <em>Psychosomatic Medicine, 69</em>(9), 897&ndash;905.'
+  },
+  {
+    id: 'reach-out',
+    name: 'Support Reach-Out',
+    category: 'regulation',
+    description: 'Connection is one of the fastest regulation tools we have.',
+    steps: [
+      'Think of one person. Someone you trust, even slightly.',
+      'Write one sentence to them: "Hey, I\'m having a hard time today."',
+      'You do not have to explain. You do not have to have it figured out.',
+      'Decide after writing whether to send it. Both choices are fine.'
+    ],
+    duration: 0,
+    source: '<a href="https://en.wikipedia.org/wiki/Social_support" target="_blank">Social regulation of threat response</a> &middot; Coan, J. A., et al. (2006). Lending a hand. <em>Psychological Science, 17</em>(12), 1032&ndash;1039. https://doi.org/10.1111/j.1467-9280.2006.01832.x'
+  },
+  // FOCUS
+  {
+    id: 'future-self',
+    name: 'Future Self Prompt',
+    category: 'focus',
+    description: 'Access your own perspective from a calmer vantage point.',
+    steps: [
+      'Imagine yourself six months from now, on a good day.',
+      'Things have changed. You are moving. You are no longer in this loop.',
+      'Write one sentence: what did you stop doing to get there?',
+      'Read it back. Notice what it points to.'
+    ],
+    duration: 0,
+    source: '<a href="https://en.wikipedia.org/wiki/Temporal_self-appraisal" target="_blank">Future self-continuity</a> &middot; Hershfield, H. E. (2011). <em>Annals of the New York Academy of Sciences, 1235</em>, 30&ndash;43. https://doi.org/10.1111/j.1749-6632.2011.06201.x'
+  },
+  {
+    id: 'miracle',
+    name: 'Miracle Minute',
+    category: 'focus',
+    description: 'Move from problem-focus to what becomes possible.',
+    steps: [
+      'Tonight you sleep. Tomorrow you wake up and whatever has been stuck has moved.',
+      'What is the first thing you notice?',
+      'Write it in one sentence.',
+      'That sentence often contains more information than it seems.'
+    ],
+    duration: 60,
+    source: '<a href="https://en.wikipedia.org/wiki/Solution-focused_brief_therapy" target="_blank">Solution-focused brief therapy (miracle question)</a> &middot; de Shazer, S. (1988). <em>Clues: Investigating Solutions in Brief Therapy.</em> W. W. Norton.'
+  },
+  {
+    id: 'strengths',
+    name: 'Strengths Reminder',
+    category: 'focus',
+    description: 'Ground yourself in evidence before the next step.',
+    steps: [
+      'Name three things you have done well in the last seven days.',
+      'Not achievements. Actions. Things you chose or got through.',
+      'Write them down. No minimising.',
+      'Read them back. These are evidence. Use them.'
+    ],
+    duration: 0,
+    source: '<a href="https://en.wikipedia.org/wiki/Positive_psychology" target="_blank">Positive psychology &amp; signature strengths</a> &middot; Seligman, M. E. P., et al. (2005). <em>American Psychologist, 60</em>(5), 410&ndash;421. https://doi.org/10.1037/0003-066X.60.5.410'
+  }
+];
+
+const CATEGORY_LABELS = { calm: 'Calm', action: 'Action', regulation: 'Regulation', focus: 'Focus' };
+const CATEGORY_ORDER  = ['calm', 'action', 'regulation', 'focus'];
+const CIRCUMFERENCE   = 2 * Math.PI * 60; // 376.99
+
+// ─── STATE ────────────────────────────────────────────────────────────
+const S = {
+  filter:        null,
+  selectedId:    null,
+  timerTotal:    0,
+  timerRemaining: 0,
+  timerRunning:  false,
+  timerInterval: null
+};
+
+// ─── SCREEN TRANSITIONS ───────────────────────────────────────────────
+function showScreen(id) {
+  const current = document.querySelector('.screen.active');
+  const next    = document.getElementById('screen-' + id);
+  if (!next || next === current) return;
+  if (current) current.classList.remove('active');
+  next.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────
+function startFull() {
+  S.filter = null;
+  showScreen('prompt');
+}
+
+function startCalm() {
+  S.filter = 'calm';
+  document.getElementById('librarySub').textContent =
+    'Calm interventions. Short resets for exactly the moment you are in.';
+  renderLibrary();
+  showScreen('library');
+}
+
+function goToLibrary() {
+  S.filter = null;
+  document.getElementById('librarySub').textContent =
+    'Choose whatever feels most relevant. If unsure, start with Calm.';
+  renderLibrary();
+  showScreen('library');
+}
+
+function goBackToLibrary() {
+  stopTimer();
+  showScreen('library');
+}
+
+function finishIntervention(status) {
+  stopTimer();
+  document.getElementById('outcomeSub').textContent = status === 'couldnt'
+    ? 'That is useful information too. Even noticing resistance is a signal.'
+    : 'Even a small move counts.';
+  document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('outcomeNote').value = '';
+  showScreen('outcome');
+}
+
+function selectOutcome(btn) {
+  document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function returnHome() {
+  stopTimer();
+  S.selectedId = null;
+  S.filter     = null;
+  document.getElementById('stuckInput').value = '';
+  showScreen('home');
+}
+
+function tryAnother() {
+  stopTimer();
+  renderLibrary();
+  showScreen('library');
+}
+
+// ─── LIBRARY RENDER ───────────────────────────────────────────────────
+function fmtDur(secs) {
+  if (!secs) return '';
+  const m = Math.floor(secs / 60), s = secs % 60;
+  return s === 0 ? `${m} min` : `${m}:${String(s).padStart(2,'0')}`;
+}
+
+function renderLibrary() {
+  const container = document.getElementById('interventionList');
+  container.innerHTML = '';
+  const cats = S.filter ? [S.filter] : CATEGORY_ORDER;
+
+  cats.forEach(cat => {
+    const items = INTERVENTIONS.filter(i => i.category === cat);
+    const group = document.createElement('div');
+    group.className = 'category-group';
+
+    const title = document.createElement('div');
+    title.className = 'section-title';
+    title.textContent = CATEGORY_LABELS[cat];
+    group.appendChild(title);
+
+    items.forEach(intv => {
+      const card = document.createElement('div');
+      card.className = 'int-card';
+      card.onclick = () => openIntervention(intv.id);
+      card.innerHTML = `
+        <div class="int-info">
+          <p class="int-name">${intv.name}</p>
+          <p class="int-desc">${intv.description}</p>
+        </div>
+        <div class="int-meta">
+          ${intv.duration ? `<span class="int-dur">${fmtDur(intv.duration)}</span>` : ''}
+          <span class="int-arrow">&#8250;</span>
+        </div>`;
+      group.appendChild(card);
+    });
+
+    container.appendChild(group);
+  });
+}
+
+// ─── DETAIL RENDER ────────────────────────────────────────────────────
+function openIntervention(id) {
+  const intv = INTERVENTIONS.find(i => i.id === id);
+  if (!intv) return;
+  S.selectedId = id;
+
+  document.getElementById('detailCategory').textContent = CATEGORY_LABELS[intv.category];
+  document.getElementById('detailHeading').textContent  = intv.name;
+  document.getElementById('detailDesc').textContent     = intv.description;
+  document.getElementById('detailSource').innerHTML     = intv.source || '';
+
+  const stepsEl = document.getElementById('stepsList');
+  stepsEl.innerHTML = '';
+  intv.steps.forEach((step, i) => {
+    const row = document.createElement('div');
+    row.className = 'step-row';
+    row.innerHTML = `<span class="step-n">${String(i + 1).padStart(2,'0')}</span>
+                     <span class="step-text">${step}</span>`;
+    stepsEl.appendChild(row);
+  });
+
+  const timerWrap = document.getElementById('timerWrap');
+  if (intv.duration > 0) {
+    timerWrap.style.display = 'flex';
+    S.timerTotal     = intv.duration;
+    S.timerRemaining = intv.duration;
+    S.timerRunning   = false;
+    stopTimer();
+    updateTimerUI();
+    document.getElementById('timerBtn').textContent = 'START TIMER';
+  } else {
+    timerWrap.style.display = 'none';
+  }
+
+  showScreen('detail');
+}
+
+// ─── TIMER ────────────────────────────────────────────────────────────
+function toggleTimer() {
+  S.timerRunning ? pauseTimer() : startTimer();
+}
+
+function startTimer() {
+  if (S.timerRemaining <= 0) S.timerRemaining = S.timerTotal;
+  S.timerRunning = true;
+  document.getElementById('timerBtn').textContent = 'PAUSE';
+
+  S.timerInterval = setInterval(() => {
+    S.timerRemaining--;
+    updateTimerUI();
+    if (S.timerRemaining <= 0) {
+      stopTimer();
+      setTimeout(() => finishIntervention('done'), 700);
+    }
+  }, 1000);
+}
+
+function pauseTimer() {
+  clearInterval(S.timerInterval);
+  S.timerRunning = false;
+  document.getElementById('timerBtn').textContent = 'RESUME';
+}
+
+function stopTimer() {
+  clearInterval(S.timerInterval);
+  S.timerInterval = null;
+  S.timerRunning  = false;
+}
+
+function updateTimerUI() {
+  const fill   = document.getElementById('timerFill');
+  const digits = document.getElementById('timerDigits');
+  const elapsed = S.timerTotal - S.timerRemaining;
+  fill.style.strokeDashoffset = (elapsed / S.timerTotal) * CIRCUMFERENCE;
+  const m = Math.floor(S.timerRemaining / 60), s = S.timerRemaining % 60;
+  digits.textContent = `${m}:${String(s).padStart(2,'0')}`;
+}
+</script>
+</body>
+</html>
