@@ -21,19 +21,6 @@ UNstuck guides you through one short, structured intervention when you are circl
 
 Timed interventions include a visual countdown ring. All content is grounded in coaching practice and published research.
 
----
-
-## How to use
-
-Open `index.html` in any browser. No build step, no dependencies beyond Google Fonts.
-
-**Deploy to GitHub Pages:**
-1. Push this folder to a GitHub repository
-2. Go to Settings > Pages > Source: Deploy from branch (main, / root)
-3. Your tool is live at `https://yourusername.github.io/unstuck`
-
----
-
 ## Research basis
 
 ### Calm interventions
@@ -85,15 +72,6 @@ Open `index.html` in any browser. No build step, no dependencies beyond Google F
   - Seligman, M. E. P., et al. (2005). Positive psychology progress: Empirical validation of interventions. *American Psychologist, 60*(5), 410–421. https://doi.org/10.1037/0003-066X.60.5.410
   - Peterson, C., & Seligman, M. E. P. (2004). *Character Strengths and Virtues: A Handbook and Classification.* APA Press / Oxford University Press.
 
----
-
-## Tech
-
-- Single HTML file: no framework, no build step
-- Fonts: Space Mono via Google Fonts
-- No cookies, no localStorage, no analytics
-
----
 
 ## Credits
 
